@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>הימור מונדיאל 2026 🏆</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#F5C842;--gold2:#c99b00;--dark:#07101f;--dark2:#0d1a2d;--dark3:#152238;--card:#111e33;--card2:#1a2d47;--green:#22c55e;--red:#ef4444;--blue:#60a5fa;--text:#e2e8f0;--muted:#7a92b0;--border:rgba(245,200,66,0.18);}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Heebo',sans-serif;background:var(--dark);color:var(--text);direction:rtl;min-height:100vh;}
+.hero{background:linear-gradient(160deg,#050d1a 0%,#0c1e36 55%,#050d1a 100%);padding:34px 20px 24px;text-align:center;border-bottom:2px solid var(--gold);position:relative;overflow:hidden;}
+.hero::after{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(245,200,66,0.06) 0%,transparent 65%);pointer-events:none;}
+.hero-badge{display:inline-block;background:var(--gold);color:#000;font-weight:900;font-size:11px;letter-spacing:2px;padding:4px 14px;border-radius:20px;margin-bottom:10px;text-transform:uppercase;}
+.hero h1{font-size:clamp(26px,5.5vw,48px);font-weight:900;color:#fff;margin-bottom:4px;}.hero h1 span{color:var(--gold);}
+.hero p{color:var(--muted);font-size:13px;}
+.score-bar{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;padding:14px 14px 0;max-width:980px;margin:0 auto;}
+.sp{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;display:flex;align-items:center;gap:5px;}.sp strong{color:var(--gold);}
+.tabs{display:flex;justify-content:center;gap:8px;padding:14px 14px 18px;flex-wrap:wrap;}
+.tab{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:10px 22px;font-family:'Heebo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.tab:hover{border-color:var(--gold);color:var(--gold);}.tab.active{background:var(--gold);color:#000;border-color:var(--gold);}
+.container{max-width:980px;margin:0 auto;padding:0 14px 70px;}.section{display:none;}.section.active{display:block;}
+.name-box{background:var(--card);border:2px solid var(--gold);border-radius:14px;padding:18px 22px;margin-bottom:22px;text-align:center;}
+.name-box h2{font-size:17px;color:var(--gold);margin-bottom:9px;}
+.name-input{background:var(--dark3);border:1px solid var(--border);border-radius:9px;padding:10px 16px;font-family:'Heebo',sans-serif;font-size:16px;color:var(--text);width:100%;max-width:260px;text-align:center;direction:rtl;}
+.name-input:focus{outline:none;border-color:var(--gold);}
+.group-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:16px;overflow:hidden;}
+.group-head{background:linear-gradient(90deg,var(--card2),var(--card));padding:11px 16px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--border);}
+.g-letter{background:var(--gold);color:#000;font-weight:900;font-size:16px;width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.g-title{font-size:14px;font-weight:700;}.g-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.match-card{display:grid;grid-template-columns:1fr 120px 1fr;align-items:stretch;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,0.04);gap:0;}
+.match-card:last-child{border-bottom:none;}
+.match-team{display:flex;align-items:center;padding:7px 9px;background:var(--dark3);min-height:46px;}
+.match-team.home{justify-content:flex-end;border-radius:9px 0 0 9px;}.match-team.away{justify-content:flex-start;border-radius:0 9px 9px 0;}
+.team-txt{font-size:12px;font-weight:700;line-height:1.3;}.home .team-txt{text-align:right;}.away .team-txt{text-align:left;}
+.match-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 6px;background:var(--dark2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.score-row{display:flex;align-items:center;gap:5px;}
+.sc{background:var(--card);border:1.5px solid var(--border);border-radius:7px;width:40px;height:34px;text-align:center;font-family:'Heebo',sans-serif;font-size:17px;font-weight:700;color:var(--gold);}
+.sc:focus{outline:none;border-color:var(--gold);}.sc::-webkit-inner-spin-button{-webkit-appearance:none;}
+.vs-lbl{color:var(--muted);font-size:10px;font-weight:700;letter-spacing:1px;}
+.match-date-lbl{font-size:10px;color:var(--muted);}
+.res-prev{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:700;margin-top:1px;display:none;}
+.res-home{background:rgba(34,197,94,.15);color:var(--green);}.res-draw{background:rgba(96,165,250,.15);color:var(--blue);}.res-away{background:rgba(239,68,68,.15);color:var(--red);}
+.ko-header{background:linear-gradient(90deg,var(--card2),var(--card));border:1px solid var(--gold);border-radius:14px;padding:16px 20px;margin-bottom:20px;margin-top:30px;}
+.ko-header h2{font-size:19px;color:var(--gold);margin-bottom:4px;}.ko-header p{color:var(--muted);font-size:12px;line-height:1.5;}
+.ko-round-label{display:flex;align-items:center;gap:10px;margin:24px 0 12px;flex-wrap:wrap;}
+.ko-round-label h3{font-size:14px;font-weight:800;letter-spacing:.5px;color:var(--gold);text-transform:uppercase;}
+.ko-pts-badge{background:var(--gold);color:#000;font-size:10px;font-weight:900;padding:3px 9px;border-radius:10px;}
+.ko-date-badge{background:var(--dark3);border:1px solid var(--border);color:var(--muted);font-size:10px;padding:3px 9px;border-radius:10px;}
+.ko-match{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;transition:border-color .2s;}
+.ko-match:hover{border-color:rgba(245,200,66,.35);}
+.ko-match-header{background:var(--card2);padding:7px 14px;font-size:11px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.ko-match-header span{color:var(--gold);font-weight:700;}
+.ko-body{display:grid;grid-template-columns:1fr 130px 1fr;align-items:stretch;}
+.ko-team{display:flex;align-items:center;padding:10px 12px;background:var(--dark3);min-height:52px;}
+.ko-team.home{justify-content:flex-end;border-radius:0 0 0 14px;}.ko-team.away{justify-content:flex-start;border-radius:0 0 14px 0;}
+.ko-team-txt{font-size:13px;font-weight:700;line-height:1.3;text-align:right;}.ko-team.away .ko-team-txt{text-align:left;}
+.ko-team-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+.ko-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;background:var(--dark2);}
+.ko-score-row{display:flex;align-items:center;gap:5px;}
+.ko-sc{background:var(--card);border:1.5px solid var(--border);border-radius:7px;width:40px;height:34px;text-align:center;font-family:'Heebo',sans-serif;font-size:17px;font-weight:700;color:var(--gold);}
+.ko-sc:focus{outline:none;border-color:var(--gold);}.ko-sc::-webkit-inner-spin-button{-webkit-appearance:none;}
+.ko-winner-sel{background:var(--card);border:1.5px solid var(--gold);border-radius:7px;padding:5px 8px;font-family:'Heebo',sans-serif;font-size:12px;color:var(--gold);font-weight:700;width:100%;direction:rtl;margin-top:3px;}
+.ko-winner-sel:focus{outline:none;}.ko-vs{color:var(--muted);font-size:10px;font-weight:700;}
+.special-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:16px;}
+.special-box.gold-box{border-color:var(--gold);background:linear-gradient(135deg,rgba(245,200,66,.05),var(--card));text-align:center;}
+.special-box h3{font-size:16px;margin-bottom:3px;}.gold-box h3{color:var(--gold);}
+.special-box p{color:var(--muted);font-size:12px;margin-bottom:10px;}
+.special-input{background:var(--dark3);border:1px solid var(--border);border-radius:9px;padding:10px 14px;font-family:'Heebo',sans-serif;font-size:15px;color:var(--text);width:100%;direction:rtl;}
+.special-input:focus{outline:none;border-color:var(--gold);}
+.champ-sel{background:var(--dark3);border:2px solid var(--gold);border-radius:9px;padding:10px 16px;font-family:'Heebo',sans-serif;font-size:15px;font-weight:700;color:var(--gold);direction:rtl;width:100%;max-width:280px;}
+.champ-sel:focus{outline:none;}
+.submit-btn{background:var(--gold);color:#000;border:none;border-radius:12px;padding:14px 40px;font-family:'Heebo',sans-serif;font-size:17px;font-weight:900;cursor:pointer;width:100%;max-width:360px;display:block;margin:0 auto 10px;transition:all .2s;}
+.submit-btn:hover{background:var(--gold2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(245,200,66,.25);}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.lb-top{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.lb-top h2{font-size:19px;}.lb-sub{font-size:12px;color:var(--muted);}
+.lb-updated{font-size:11px;color:var(--muted);margin-top:3px;}
+.live-dot{display:inline-block;width:7px;height:7px;background:var(--green);border-radius:50%;margin-left:5px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.lb-table{width:100%;border-collapse:collapse;}
+.lb-table th{background:var(--dark3);padding:9px 13px;font-size:12px;color:var(--muted);font-weight:600;text-align:right;border-bottom:1px solid var(--border);}
+.lb-table td{padding:12px 13px;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.lb-table tr:hover td{background:rgba(255,255,255,.02);}
+.pts-badge{background:var(--gold);color:#000;font-weight:900;font-size:14px;padding:3px 11px;border-radius:20px;display:inline-block;}
+.admin-box{background:var(--card);border:1px solid var(--red);border-radius:14px;padding:18px 20px;margin-bottom:16px;}
+.admin-box h3{color:var(--red);font-size:16px;margin-bottom:4px;}.admin-box p{color:var(--muted);font-size:12px;margin-bottom:12px;}
+.admin-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+.admin-input{background:var(--dark3);border:1px solid var(--border);border-radius:9px;padding:9px 14px;font-family:'Heebo',sans-serif;font-size:14px;color:var(--text);flex:1;min-width:160px;direction:rtl;}
+.admin-input:focus{outline:none;border-color:var(--gold);}
+.admin-btn{background:var(--red);color:#fff;border:none;border-radius:9px;padding:9px 18px;font-family:'Heebo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.admin-btn:hover{opacity:.85;}
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted);}.empty-state .em{font-size:42px;margin-bottom:10px;}
+.loading{text-align:center;padding:30px;color:var(--muted);font-size:14px;}
+.error-msg{background:rgba(239,68,68,.1);border:1px solid var(--red);border-radius:10px;padding:12px 16px;color:var(--red);font-size:13px;margin-bottom:14px;}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--green);color:#fff;padding:12px 24px;border-radius:11px;font-weight:700;font-size:14px;z-index:999;transition:transform .35s ease;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}.toast.err{background:var(--red);}
+@media(max-width:520px){.match-card,.ko-body{grid-template-columns:1fr 108px 1fr;}.team-txt,.ko-team-txt{font-size:11px;}.sc,.ko-sc{width:35px;height:31px;font-size:15px;}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">⚽ הימור רשמי</div>
+  <h1>מונדיאל <span>2026</span> 🏆</h1>
+  <p>מלא תוצאות — הברקט מתמלא לבד, הניקוד מתעדכן חי אוטומטית</p>
+</div>
+<div class="score-bar">
+  <div class="sp">בתים — כיוון <strong>3</strong> נק׳</div>
+  <div class="sp">תוצאה מדויקת <strong>5</strong> נק׳</div>
+  <div class="sp">שמינית (32) <strong>6</strong> נק׳</div>
+  <div class="sp">שמינית (16) <strong>8</strong> נק׳</div>
+  <div class="sp">רבע גמר <strong>10</strong> נק׳</div>
+  <div class="sp">חצי גמר <strong>12</strong> נק׳</div>
+  <div class="sp">מקום 3 <strong>14</strong> נק׳</div>
+  <div class="sp">גמר <strong>14</strong> נק׳</div>
+  <div class="sp">🏆 אלופה <strong>18</strong> נק׳</div>
+  <div class="sp">⚽ מלך שערים <strong>12</strong> נק׳</div>
+</div>
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('form',this)">📋 טופס ניבוי</button>
+  <button class="tab" onclick="switchTab('leaderboard',this)">🏅 לוח ניקוד</button>
+  <button class="tab" onclick="switchTab('admin',this)">🔐 ניהול</button>
+</div>
+<div class="container">
+  <div id="section-form" class="section active">
+    <div class="name-box"><h2>👤 מי אתה?</h2><input class="name-input" id="playerName" type="text" placeholder="הכנס שם מלא..."></div>
+    <div id="groupStage"></div>
+    <div class="ko-header"><h2>🏆 שלבי הנוקאאוט</h2><p>הברקט מתמלא אוטומטית לפי הניחושים בשלב הבתים. בחר תוצאות ומנצח — המנצחים עוברים לשלב הבא אוטומטית.</p></div>
+    <div id="knockoutSection"></div>
+    <div class="special-box" style="margin-top:8px"><h3>⚽ מלך השערים</h3><p>מי יהיה מלך השערים? (12 נקודות)</p><input class="special-input" id="topScorer" type="text" placeholder="שם השחקן..."></div>
+    <div class="special-box gold-box"><h3>🥇 אלופת המונדיאל</h3><p>מי תזכה בגביע? (18 נקודות)</p><select class="champ-sel" id="champion"><option value="">— בחר אלופה —</option></select></div>
+    <button class="submit-btn" id="submitBtn" onclick="submitForm()">💾 שמור טופס</button>
+  </div>
+  <div id="section-leaderboard" class="section">
+    <div class="lb-top">
+      <div><h2>🏅 לוח ניקוד</h2><div class="lb-updated" id="lbUpdated"></div></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="live-dot"></span><span class="lb-sub" id="lbCount">טוען...</span>
+        <button onclick="loadLeaderboard()" style="background:var(--dark3);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 12px;font-family:'Heebo',sans-serif;font-size:12px;cursor:pointer;">רענן</button>
+      </div>
+    </div>
+    <div id="lbContent"><div class="loading">⏳ טוען נתונים...</div></div>
+  </div>
+  <div id="section-admin" class="section">
+    <div class="admin-box">
+      <h3>🔐 פאנל ניהול</h3>
+      <p>רק למנהל — הוסף נקודות למלך השערים בסוף הטורניר</p>
+      <div style="margin-bottom:16px"><label style="font-size:12px;color:var(--muted);display:block;margin-bottom:6px">סיסמת מנהל</label><input class="admin-input" id="adminKey" type="password" placeholder="הכנס סיסמה..." style="max-width:220px"></div>
+      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:6px">⚽ מלך השערים — הכנס שם לתגמול 12 נקודות</label>
+      <div class="admin-row"><input class="admin-input" id="adminScorer" type="text" placeholder="שם מלך השערים..."><button class="admin-btn" onclick="adminAward('scorer')">הוסף נקודות</button></div>
+      <div id="adminMsg" style="margin-top:12px;font-size:13px;color:var(--green);display:none"></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const GROUPS=[{l:"A",teams:["🇲🇽 מקסיקו","🇿🇦 דרום אפריקה","🇰🇷 קוריאה הדרומית","🇨🇿 צ'כיה"]},{l:"B",teams:["🇨🇦 קנדה","🇧🇦 בוסניה","🇶🇦 קטר","🇨🇭 שוויץ"]},{l:"C",teams:["🇧🇷 ברזיל","🇲🇦 מרוקו","🇭🇹 האיטי","🏴󠁧󠁢󠁳󠁣󠁴󠁿 סקוטלנד"]},{l:"D",teams:["🇺🇸 ארה\"ב","🇵🇾 פרגוואי","🇦🇺 אוסטרליה","🇹🇷 טורקיה"]},{l:"E",teams:["🇩🇪 גרמניה","🇨🇼 קוראסאו","🇨🇮 חוף השנהב","🇪🇨 אקוודור"]},{l:"F",teams:["🇳🇱 הולנד","🇯🇵 יפן","🇸🇪 שוודיה","🇹🇳 תוניסיה"]},{l:"G",teams:["🇧🇪 בלגיה","🇪🇬 מצרים","🇮🇷 איראן","🇳🇿 ניו זילנד"]},{l:"H",teams:["🇪🇸 ספרד","🇨🇻 קאבו ורדה","🇸🇦 סעודיה","🇺🇾 אורוגוואי"]},{l:"I",teams:["🇫🇷 צרפת","🇸🇳 סנגל","🇮🇶 עיראק","🇳🇴 נורווגיה"]},{l:"J",teams:["🇦🇷 ארגנטינה","🇩🇿 אלג'יריה","🇦🇹 אוסטריה","🇯🇴 ירדן"]},{l:"K",teams:["🇵🇹 פורטוגל","🇨🇩 קונגו","🇺🇿 אוזבקיסטן","🇨🇴 קולומביה"]},{l:"L",teams:["🏴󠁧󠁢󠁥󠁮󠁧󠁿 אנגליה","🇭🇷 קרואטיה","🇬🇭 גאנה","🇵🇦 פנמה"]}];
+const MATCHES=[{id:"A1",home:"🇲🇽 מקסיקו",away:"🇿🇦 דרום אפריקה",g:"A",d:"11.6"},{id:"A2",home:"🇰🇷 קוריאה הדרומית",away:"🇨🇿 צ'כיה",g:"A",d:"11.6"},{id:"A3",home:"🇲🇽 מקסיקו",away:"🇰🇷 קוריאה הדרומית",g:"A",d:"15.6"},{id:"A4",home:"🇨🇿 צ'כיה",away:"🇿🇦 דרום אפריקה",g:"A",d:"16.6"},{id:"A5",home:"🇨🇿 צ'כיה",away:"🇲🇽 מקסיקו",g:"A",d:"19.6"},{id:"A6",home:"🇿🇦 דרום אפריקה",away:"🇰🇷 קוריאה הדרומית",g:"A",d:"19.6"},{id:"B1",home:"🇨🇦 קנדה",away:"🇧🇦 בוסניה",g:"B",d:"12.6"},{id:"B2",home:"🇶🇦 קטר",away:"🇨🇭 שוויץ",g:"B",d:"13.6"},{id:"B3",home:"🇨🇦 קנדה",away:"🇶🇦 קטר",g:"B",d:"17.6"},{id:"B4",home:"🇨🇭 שוויץ",away:"🇧🇦 בוסניה",g:"B",d:"17.6"},{id:"B5",home:"🇨🇭 שוויץ",away:"🇨🇦 קנדה",g:"B",d:"22.6"},{id:"B6",home:"🇧🇦 בוסניה",away:"🇶🇦 קטר",g:"B",d:"22.6"},{id:"C1",home:"🇧🇷 ברזיל",away:"🇲🇦 מרוקו",g:"C",d:"13.6"},{id:"C2",home:"🇭🇹 האיטי",away:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 סקוטלנד",g:"C",d:"13.6"},{id:"C3",home:"🇧🇷 ברזיל",away:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 סקוטלנד",g:"C",d:"18.6"},{id:"C4",home:"🇲🇦 מרוקו",away:"🇭🇹 האיטי",g:"C",d:"18.6"},{id:"C5",home:"🇲🇦 מרוקו",away:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 סקוטלנד",g:"C",d:"23.6"},{id:"C6",home:"🇭🇹 האיטי",away:"🇧🇷 ברזיל",g:"C",d:"23.6"},{id:"D1",home:"🇺🇸 ארה\"ב",away:"🇵🇾 פרגוואי",g:"D",d:"12.6"},{id:"D2",home:"🇦🇺 אוסטרליה",away:"🇹🇷 טורקיה",g:"D",d:"12.6"},{id:"D3",home:"🇺🇸 ארה\"ב",away:"🇦🇺 אוסטרליה",g:"D",d:"19.6"},{id:"D4",home:"🇵🇾 פרגוואי",away:"🇹🇷 טורקיה",g:"D",d:"20.6"},{id:"D5",home:"🇹🇷 טורקיה",away:"🇺🇸 ארה\"ב",g:"D",d:"25.6"},{id:"D6",home:"🇦🇺 אוסטרליה",away:"🇵🇾 פרגוואי",g:"D",d:"25.6"},{id:"E1",home:"🇩🇪 גרמניה",away:"🇨🇼 קוראסאו",g:"E",d:"14.6"},{id:"E2",home:"🇨🇮 חוף השנהב",away:"🇪🇨 אקוודור",g:"E",d:"14.6"},{id:"E3",home:"🇩🇪 גרמניה",away:"🇨🇮 חוף השנהב",g:"E",d:"19.6"},{id:"E4",home:"🇪🇨 אקוודור",away:"🇨🇼 קוראסאו",g:"E",d:"20.6"},{id:"E5",home:"🇪🇨 אקוודור",away:"🇩🇪 גרמניה",g:"E",d:"24.6"},{id:"E6",home:"🇨🇼 קוראסאו",away:"🇨🇮 חוף השנהב",g:"E",d:"24.6"},{id:"F1",home:"🇳🇱 הולנד",away:"🇯🇵 יפן",g:"F",d:"14.6"},{id:"F2",home:"🇸🇪 שוודיה",away:"🇹🇳 תוניסיה",g:"F",d:"14.6"},{id:"F3",home:"🇳🇱 הולנד",away:"🇸🇪 שוודיה",g:"F",d:"19.6"},{id:"F4",home:"🇯🇵 יפן",away:"🇹🇳 תוניסיה",g:"F",d:"20.6"},{id:"F5",home:"🇯🇵 יפן",away:"🇸🇪 שוודיה",g:"F",d:"24.6"},{id:"F6",home:"🇹🇳 תוניסיה",away:"🇳🇱 הולנד",g:"F",d:"24.6"},{id:"G1",home:"🇧🇪 בלגיה",away:"🇪🇬 מצרים",g:"G",d:"15.6"},{id:"G2",home:"🇮🇷 איראן",away:"🇳🇿 ניו זילנד",g:"G",d:"15.6"},{id:"G3",home:"🇧🇪 בלגיה",away:"🇮🇷 איראן",g:"G",d:"20.6"},{id:"G4",home:"🇪🇬 מצרים",away:"🇳🇿 ניו זילנד",g:"G",d:"20.6"},{id:"G5",home:"🇪🇬 מצרים",away:"🇮🇷 איראן",g:"G",d:"25.6"},{id:"G6",home:"🇳🇿 ניו זילנד",away:"🇧🇪 בלגיה",g:"G",d:"25.6"},{id:"H1",home:"🇪🇸 ספרד",away:"🇨🇻 קאבו ורדה",g:"H",d:"15.6"},{id:"H2",home:"🇸🇦 סעודיה",away:"🇺🇾 אורוגוואי",g:"H",d:"15.6"},{id:"H3",home:"🇪🇸 ספרד",away:"🇸🇦 סעודיה",g:"H",d:"20.6"},{id:"H4",home:"🇺🇾 אורוגוואי",away:"🇨🇻 קאבו ורדה",g:"H",d:"21.6"},{id:"H5",home:"🇺🇾 אורוגוואי",away:"🇪🇸 ספרד",g:"H",d:"25.6"},{id:"H6",home:"🇨🇻 קאבו ורדה",away:"🇸🇦 סעודיה",g:"H",d:"25.6"},{id:"I1",home:"🇫🇷 צרפת",away:"🇸🇳 סנגל",g:"I",d:"16.6"},{id:"I2",home:"🇮🇶 עיראק",away:"🇳🇴 נורווגיה",g:"I",d:"16.6"},{id:"I3",home:"🇫🇷 צרפת",away:"🇮🇶 עיראק",g:"I",d:"21.6"},{id:"I4",home:"🇳🇴 נורווגיה",away:"🇸🇳 סנגל",g:"I",d:"21.6"},{id:"I5",home:"🇳🇴 נורווגיה",away:"🇫🇷 צרפת",g:"I",d:"26.6"},{id:"I6",home:"🇸🇳 סנגל",away:"🇮🇶 עיראק",g:"I",d:"26.6"},{id:"J1",home:"🇦🇷 ארגנטינה",away:"🇩🇿 אלג'יריה",g:"J",d:"16.6"},{id:"J2",home:"🇦🇹 אוסטריה",away:"🇯🇴 ירדן",g:"J",d:"16.6"},{id:"J3",home:"🇦🇷 ארגנטינה",away:"🇦🇹 אוסטריה",g:"J",d:"21.6"},{id:"J4",home:"🇯🇴 ירדן",away:"🇩🇿 אלג'יריה",g:"J",d:"22.6"},{id:"J5",home:"🇯🇴 ירדן",away:"🇦🇷 ארגנטינה",g:"J",d:"26.6"},{id:"J6",home:"🇩🇿 אלג'יריה",away:"🇦🇹 אוסטריה",g:"J",d:"26.6"},{id:"K1",home:"🇵🇹 פורטוגל",away:"🇨🇩 קונגו",g:"K",d:"17.6"},{id:"K2",home:"🇺🇿 אוזבקיסטן",away:"🇨🇴 קולומביה",g:"K",d:"17.6"},{id:"K3",home:"🇵🇹 פורטוגל",away:"🇺🇿 אוזבקיסטן",g:"K",d:"22.6"},{id:"K4",home:"🇨🇴 קולומביה",away:"🇨🇩 קונגו",g:"K",d:"22.6"},{id:"K5",home:"🇨🇴 קולומביה",away:"🇵🇹 פורטוגל",g:"K",d:"27.6"},{id:"K6",home:"🇨🇩 קונגו",away:"🇺🇿 אוזבקיסטן",g:"K",d:"27.6"},{id:"L1",home:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 אנגליה",away:"🇭🇷 קרואטיה",g:"L",d:"17.6"},{id:"L2",home:"🇬🇭 גאנה",away:"🇵🇦 פנמה",g:"L",d:"17.6"},{id:"L3",home:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 אנגליה",away:"🇬🇭 גאנה",g:"L",d:"22.6"},{id:"L4",home:"🇵🇦 פנמה",away:"🇭🇷 קרואטיה",g:"L",d:"22.6"},{id:"L5",home:"🇵🇦 פנמה",away:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 אנגליה",g:"L",d:"27.6"},{id:"L6",home:"🇭🇷 קרואטיה",away:"🇬🇭 גאנה",g:"L",d:"27.6"}];
+const ALL_TEAMS=["מקסיקו","דרום אפריקה","קוריאה הדרומית","צ'כיה","קנדה","בוסניה","קטר","שוויץ","ברזיל","מרוקו","האיטי","סקוטלנד","ארה\"ב","פרגוואי","אוסטרליה","טורקיה","גרמניה","קוראסאו","חוף השנהב","אקוודור","הולנד","יפן","שוודיה","תוניסיה","בלגיה","מצרים","איראן","ניו זילנד","ספרד","קאבו ורדה","סעודיה","אורוגוואי","צרפת","סנגל","עיראק","נורווגיה","ארגנטינה","אלג'יריה","אוסטריה","ירדן","פורטוגל","קונגו","אוזבקיסטן","קולומביה","אנגליה","קרואטיה","גאנה","פנמה"];
+const R32=[{id:"r32_73",home:{type:"runner",g:"A"},away:{type:"runner",g:"B"},date:"28.6"},{id:"r32_74",home:{type:"winner",g:"E"},away:{type:"third",gs:"ABCDF"},date:"28.6"},{id:"r32_75",home:{type:"winner",g:"F"},away:{type:"runner",g:"C"},date:"29.6"},{id:"r32_76",home:{type:"winner",g:"C"},away:{type:"runner",g:"F"},date:"29.6"},{id:"r32_77",home:{type:"winner",g:"I"},away:{type:"third",gs:"CDFGH"},date:"29.6"},{id:"r32_78",home:{type:"runner",g:"E"},away:{type:"runner",g:"I"},date:"30.6"},{id:"r32_79",home:{type:"winner",g:"A"},away:{type:"third",gs:"CEFHI"},date:"30.6"},{id:"r32_80",home:{type:"winner",g:"L"},away:{type:"third",gs:"EHIJK"},date:"30.6"},{id:"r32_81",home:{type:"winner",g:"D"},away:{type:"third",gs:"BEFIJ"},date:"1.7"},{id:"r32_82",home:{type:"winner",g:"G"},away:{type:"third",gs:"AEHIJ"},date:"1.7"},{id:"r32_83",home:{type:"runner",g:"K"},away:{type:"runner",g:"L"},date:"2.7"},{id:"r32_84",home:{type:"winner",g:"H"},away:{type:"runner",g:"J"},date:"2.7"},{id:"r32_85",home:{type:"winner",g:"B"},away:{type:"third",gs:"EFGIJ"},date:"2.7"},{id:"r32_86",home:{type:"winner",g:"J"},away:{type:"runner",g:"H"},date:"3.7"},{id:"r32_87",home:{type:"winner",g:"K"},away:{type:"third",gs:"DEIJL"},date:"3.7"},{id:"r32_88",home:{type:"runner",g:"D"},away:{type:"runner",g:"G"},date:"3.7"}];
+const R16=[{id:"r16_89",home:"r32_74",away:"r32_77",date:"4.7"},{id:"r16_90",home:"r32_73",away:"r32_75",date:"4.7"},{id:"r16_91",home:"r32_76",away:"r32_78",date:"5.7"},{id:"r16_92",home:"r32_79",away:"r32_80",date:"5.7"},{id:"r16_93",home:"r32_83",away:"r32_84",date:"6.7"},{id:"r16_94",home:"r32_81",away:"r32_82",date:"6.7"},{id:"r16_95",home:"r32_86",away:"r32_88",date:"7.7"},{id:"r16_96",home:"r32_85",away:"r32_87",date:"7.7"}];
+const QF=[{id:"qf_97",home:"r16_89",away:"r16_90",date:"9.7"},{id:"qf_98",home:"r16_91",away:"r16_92",date:"9.7"},{id:"qf_99",home:"r16_93",away:"r16_94",date:"10.7"},{id:"qf_100",home:"r16_95",away:"r16_96",date:"10.7"}];
+const SF=[{id:"sf_101",home:"qf_97",away:"qf_98",date:"14.7"},{id:"sf_102",home:"qf_99",away:"qf_100",date:"15.7"}];
+const THIRD={id:"3rd_103",home:"sf_101",away:"sf_102",loser:true,date:"18.7"};
+const FINAL={id:"fin_104",home:"sf_101",away:"sf_102",date:"19.7"};
+const groupStandings={};const koWinners={};
+
+function buildGroups(){
+  const con=document.getElementById('groupStage');
+  GROUPS.forEach(g=>{
+    const rows=MATCHES.filter(m=>m.g===g.l).map(m=>`<div class="match-card"><div class="match-team home"><span class="team-txt">${m.home}</span></div><div class="match-center"><div class="score-row"><input class="sc" type="number" min="0" max="20" id="h_${m.id}" placeholder="0" oninput="onScoreInput('${m.id}')"><span class="vs-lbl">:</span><input class="sc" type="number" min="0" max="20" id="a_${m.id}" placeholder="0" oninput="onScoreInput('${m.id}')"></div><div class="match-date-lbl">${m.d}</div><div id="prev_${m.id}" class="res-prev"></div></div><div class="match-team away"><span class="team-txt">${m.away}</span></div></div>`).join('');
+    con.innerHTML+=`<div class="group-wrap"><div class="group-head"><div class="g-letter">${g.l}</div><div><div class="g-title">בית ${g.l}</div><div class="g-sub">${g.teams.join(' · ')}</div></div></div>${rows}</div>`;
+  });
+}
+function onScoreInput(id){
+  const h=document.getElementById('h_'+id).value,a=document.getElementById('a_'+id).value;
+  const el=document.getElementById('prev_'+id);
+  if(h===''||a===''){el.style.display='none';return;}
+  el.style.display='block';
+  const hi=parseInt(h),ai=parseInt(a);
+  if(hi>ai){el.className='res-prev res-home';el.textContent='ניצחון בית ✓';}
+  else if(hi<ai){el.className='res-prev res-away';el.textContent='ניצחון אורח ✓';}
+  else{el.className='res-prev res-draw';el.textContent='תיקו ✓';}
+  recomputeGroup(MATCHES.find(m=>m.id===id)?.g);
+}
+function recomputeGroup(grp){
+  if(!grp)return;
+  const gTeams=GROUPS.find(g=>g.l===grp).teams;
+  const pts={},gd={};gTeams.forEach(t=>{pts[t]=0;gd[t]=0;});
+  MATCHES.filter(m=>m.g===grp).forEach(m=>{
+    const h=parseInt(document.getElementById('h_'+m.id)?.value),a=parseInt(document.getElementById('a_'+m.id)?.value);
+    if(isNaN(h)||isNaN(a))return;
+    if(h>a)pts[m.home]=(pts[m.home]||0)+3;else if(h<a)pts[m.away]=(pts[m.away]||0)+3;
+    else{pts[m.home]=(pts[m.home]||0)+1;pts[m.away]=(pts[m.away]||0)+1;}
+    gd[m.home]=(gd[m.home]||0)+(h-a);gd[m.away]=(gd[m.away]||0)+(a-h);
+  });
+  const sorted=[...gTeams].sort((a,b)=>(pts[b]-pts[a])||gd[b]-gd[a]);
+  groupStandings[grp]={w:sorted[0],r:sorted[1]};
+  refreshKnockout();
+}
+function buildKnockout(){
+  const con=document.getElementById('knockoutSection');con.innerHTML='';
+  con.innerHTML+=`<div class="ko-round-label"><h3>⚡ שמינית הגמר — סיבוב 1</h3><span class="ko-pts-badge">6 נק׳</span><span class="ko-date-badge">28.6–3.7</span></div>`;
+  R32.forEach(m=>con.innerHTML+=buildKoCard(m,'r32'));
+  con.innerHTML+=`<div class="ko-round-label" style="margin-top:28px"><h3>🔥 שמינית הגמר — סיבוב 2</h3><span class="ko-pts-badge">8 נק׳</span><span class="ko-date-badge">4–7.7</span></div>`;
+  R16.forEach(m=>con.innerHTML+=buildKoCard(m,'r16'));
+  con.innerHTML+=`<div class="ko-round-label" style="margin-top:28px"><h3>💥 רבע גמר</h3><span class="ko-pts-badge">10 נק׳</span><span class="ko-date-badge">9–10.7</span></div>`;
+  QF.forEach(m=>con.innerHTML+=buildKoCard(m,'qf'));
+  con.innerHTML+=`<div class="ko-round-label" style="margin-top:28px"><h3>🌟 חצי גמר</h3><span class="ko-pts-badge">12 נק׳</span><span class="ko-date-badge">14–15.7</span></div>`;
+  SF.forEach(m=>con.innerHTML+=buildKoCard(m,'sf'));
+  con.innerHTML+=`<div class="ko-round-label" style="margin-top:28px"><h3>🥉 מקום שלישי</h3><span class="ko-pts-badge">14 נק׳</span><span class="ko-date-badge">18.7</span></div>`;
+  con.innerHTML+=buildKoCard(THIRD,'3rd');
+  con.innerHTML+=`<div class="ko-round-label" style="margin-top:28px"><h3>🏆 גמר</h3><span class="ko-pts-badge">14 נק׳</span><span class="ko-date-badge">19.7</span></div>`;
+  con.innerHTML+=buildKoCard(FINAL,'fin');
+  const cs=document.getElementById('champion');
+  if(cs.options.length<=1)ALL_TEAMS.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;cs.appendChild(o);});
+  refreshKnockout();
+}
+function buildKoCard(m,round){
+  const{ht,at}=getTeams(m,round);
+  const lbl=round==='r32'?`${slotLbl(m.home)} נגד ${slotLbl(m.away)}`:round==='r16'?`מנצח ${m.home.split('_')[1]} נגד מנצח ${m.away.split('_')[1]}`:round==='qf'?'רבע גמר':round==='sf'?'חצי גמר':round==='3rd'?'מקום שלישי':'🏆 גמר';
+  const isReal=t=>t&&t!=='?'&&!t.includes('מנצח')&&!t.includes('מפסיד')&&!t.includes('בית')&&!t.includes('(');
+  return `<div class="ko-match" id="card_${m.id}"><div class="ko-match-header"><span>${lbl}</span><span style="color:var(--muted);font-weight:400">${m.date}</span></div><div class="ko-body"><div class="ko-team home"><div><div class="ko-team-txt" id="hname_${m.id}" style="color:${isReal(ht)?'var(--text)':'var(--muted)'}">${ht||'?'}</div></div></div><div class="ko-center"><div class="ko-score-row"><input class="ko-sc" type="number" min="0" max="20" id="kh_${m.id}" placeholder="0" oninput="onKoScore('${m.id}')"><span class="ko-vs">:</span><input class="ko-sc" type="number" min="0" max="20" id="ka_${m.id}" placeholder="0" oninput="onKoScore('${m.id}')"></div><select class="ko-winner-sel" id="kw_${m.id}" onchange="onWinnerPick('${m.id}')"><option value="">— מנצח —</option></select></div><div class="ko-team away"><div><div class="ko-team-txt" id="aname_${m.id}" style="color:${isReal(at)?'var(--text)':'var(--muted)'}">${at||'?'}</div></div></div></div></div>`;
+}
+function slotLbl(s){return s.type==='winner'?`1 בית ${s.g}`:s.type==='runner'?`2 בית ${s.g}`:`3 (${s.gs})`;}
+function resolveSlot(s){if(!groupStandings[s.g])return null;return s.type==='winner'?groupStandings[s.g].w:s.type==='runner'?groupStandings[s.g].r:null;}
+function getTeams(m,round){
+  if(round==='r32'){const ht=resolveSlot(m.home),at=resolveSlot(m.away);return{ht:ht||slotLbl(m.home),at:at||slotLbl(m.away)};}
+  if(round==='3rd'){
+    const w1=koWinners['sf_101'],w2=koWinners['sf_102'];
+    const sf1=SF[0],sf2=SF[1];
+    const h1=koWinners[sf1.home],a1=koWinners[sf1.away],h2=koWinners[sf2.home],a2=koWinners[sf2.away];
+    const l1=w1&&h1&&a1?(w1===h1?a1:h1):null,l2=w2&&h2&&a2?(w2===h2?a2:h2):null;
+    return{ht:l1||'מפסיד חצי 1',at:l2||'מפסיד חצי 2'};
+  }
+  return{ht:koWinners[m.home]||`מנצח ${m.home.split('_')[1]}`,at:koWinners[m.away]||`מנצח ${m.away.split('_')[1]}`};
+}
+function isReal(t){return t&&t!=='?'&&!t.includes('מנצח')&&!t.includes('מפסיד')&&!t.includes('בית')&&!t.includes('(');}
+function refreshKnockout(){
+  [...R32,...R16,...QF,...SF,THIRD,FINAL].forEach(m=>{
+    const round=m.id.split('_')[0];
+    const{ht,at}=getTeams(m,round);
+    const hn=document.getElementById('hname_'+m.id),an=document.getElementById('aname_'+m.id);
+    if(!hn)return;
+    hn.textContent=ht;an.textContent=at;
+    hn.style.color=isReal(ht)?'var(--text)':'var(--muted)';
+    an.style.color=isReal(at)?'var(--text)':'var(--muted)';
+    const sel=document.getElementById('kw_'+m.id),prev=sel.value;
+    sel.innerHTML='<option value="">— מנצח —</option>';
+    if(isReal(ht))sel.innerHTML+=`<option value="${ht}">${ht}</option>`;
+    if(isReal(at))sel.innerHTML+=`<option value="${at}">${at}</option>`;
+    if(prev&&(prev===ht||prev===at))sel.value=prev;
+  });
+}
+function onKoScore(id){
+  const h=parseInt(document.getElementById('kh_'+id)?.value),a=parseInt(document.getElementById('ka_'+id)?.value);
+  if(isNaN(h)||isNaN(a)||h===a)return;
+  const sel=document.getElementById('kw_'+id),hname=document.getElementById('hname_'+id)?.textContent,aname=document.getElementById('aname_'+id)?.textContent;
+  if(h>a&&sel.querySelector(`option[value="${hname}"]`))sel.value=hname;
+  else if(a>h&&sel.querySelector(`option[value="${aname}"]`))sel.value=aname;
+  onWinnerPick(id);
+}
+function onWinnerPick(id){koWinners[id]=document.getElementById('kw_'+id)?.value||null;refreshKnockout();}
+
+async function submitForm(){
+  const name=document.getElementById('playerName').value.trim();
+  if(!name){toast('נא להכניס שם!',true);return;}
+  const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='שומר...';
+  const scores={};
+  MATCHES.forEach(m=>{const h=document.getElementById('h_'+m.id)?.value,a=document.getElementById('a_'+m.id)?.value;if(h!==''&&a!=='')scores[m.id]={h:parseInt(h),a:parseInt(a)};});
+  const ko={};
+  [...R32,...R16,...QF,...SF,THIRD,FINAL].forEach(m=>{const kh=document.getElementById('kh_'+m.id)?.value,ka=document.getElementById('ka_'+m.id)?.value,kw=document.getElementById('kw_'+m.id)?.value;ko[m.id]={h:kh?parseInt(kh):null,a:ka?parseInt(ka):null,winner:kw||null};});
+  try{
+    const r=await fetch('/api/submissions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,scores,ko,topScorer:document.getElementById('topScorer').value.trim(),champion:document.getElementById('champion').value})});
+    if(!r.ok)throw new Error('שגיאה בשמירה');
+    toast('✅ הטופס נשמר בהצלחה!');
+  }catch(e){toast('❌ '+e.message,true);}
+  btn.disabled=false;btn.textContent='💾 שמור טופס';
+}
+async function loadLeaderboard(){
+  document.getElementById('lbContent').innerHTML='<div class="loading">⏳ טוען נתונים...</div>';
+  try{
+    const r=await fetch('/api/results');
+    if(!r.ok)throw new Error('שגיאה בטעינה');
+    const data=await r.json();
+    document.getElementById('lbCount').textContent=data.leaderboard.length+' משתתפים';
+    document.getElementById('lbUpdated').innerHTML=`<span class="live-dot"></span> עודכן: ${new Date(data.lastUpdated).toLocaleTimeString('he-IL')} · ${data.gamesProcessed} משחקים`;
+    const medals=['🥇','🥈','🥉'];
+    if(!data.leaderboard.length){document.getElementById('lbContent').innerHTML='<div class="empty-state"><div class="em">🏆</div><p>אין משתתפים עדיין!</p></div>';return;}
+    const rows=data.leaderboard.map((s,i)=>`<tr><td style="font-size:18px">${medals[i]||(i+1)}</td><td><strong>${s.name}</strong><br><span style="font-size:11px;color:var(--muted)">${new Date(s.at).toLocaleDateString('he-IL')}</span></td><td style="font-size:13px;color:var(--muted)">${s.champion||'—'}</td><td style="font-size:13px;color:var(--muted)">${s.topScorer||'—'}</td><td style="text-align:center"><span class="pts-badge">${s.pts}</span></td></tr>`).join('');
+    document.getElementById('lbContent').innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden"><table class="lb-table"><thead><tr><th>#</th><th>שם</th><th>🏆 אלופה</th><th>⚽ מלך שערים</th><th style="text-align:center">נקודות</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }catch(e){document.getElementById('lbContent').innerHTML=`<div class="error-msg">❌ ${e.message}</div>`;}
+}
+async function adminAward(type){
+  const key=document.getElementById('adminKey').value,name=document.getElementById('adminScorer').value;
+  if(!key||!name){toast('נא למלא סיסמה ושם',true);return;}
+  try{
+    const r=await fetch('/api/results',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({adminKey:key,scorerName:name,action:'awardScorer'})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error||'שגיאה');
+    const msg=document.getElementById('adminMsg');msg.style.display='block';msg.textContent='✅ עודכן בהצלחה!';
+    toast('✅ נקודות הוספו!');
+  }catch(e){toast('❌ '+e.message,true);}
+}
+function switchTab(tab,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('section-'+tab).classList.add('active');
+  if(tab==='leaderboard')loadLeaderboard();
+}
+function toast(msg,err=false){
+  const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(err?' err':'');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
+}
+buildGroups();buildKnockout();
+</script>
+</body>
+</html>
