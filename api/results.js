@@ -1,4 +1,9 @@
-const { kv } = require('@vercel/kv');
+const { Redis } = require('@upstash/redis');
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
 
 const SCORING = { direction:3, exact:5, r32:6, r16:8, qf:10, sf:12, third:14, final:14, champion:18, topScorer:12 };
 const FALLBACK_URL = 'https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json';
@@ -58,7 +63,6 @@ function calcPoints(sub, groupScores, koWinners) {
   if(koWinners.third&&sub.ko?.['m103']?.winner===koWinners.third)pts+=SCORING.third;
   if(koWinners.champion&&sub.ko?.['m104']?.winner===koWinners.champion)pts+=SCORING.final;
   if(sub.scorerAwarded)pts+=SCORING.topScorer;
-  if(sub.championAwarded)pts+=SCORING.champion;
   return pts;
 }
 
@@ -72,7 +76,7 @@ module.exports = async (req, res) => {
     try {
       const { adminKey, scorerName, action } = req.body || {};
       if (adminKey !== (process.env.ADMIN_KEY||'wc2026admin')) return res.status(401).json({ error: 'Unauthorized' });
-      let list = await kv.get('submissions') || [];
+      let list = await redis.get('submissions') || [];
       if (action==='awardScorer'&&scorerName) {
         const norm=scorerName.toLowerCase().trim();
         list=list.map(s=>{
@@ -81,7 +85,7 @@ module.exports = async (req, res) => {
           return s;
         });
       }
-      await kv.set('submissions', list);
+      await redis.set('submissions', list);
       return res.status(200).json({ ok:true, count:list.length });
     } catch(e) { return res.status(500).json({ error: e.message }); }
   }
@@ -90,7 +94,7 @@ module.exports = async (req, res) => {
     try {
       const rawData = await fetchResults();
       const { groupScores, koWinners } = parseResults(rawData);
-      let list = await kv.get('submissions') || [];
+      let list = await redis.get('submissions') || [];
       const leaderboard = list.map(s => ({
         name:s.name, pts:calcPoints(s,groupScores,koWinners),
         topScorer:s.topScorer, champion:s.champion, at:s.at,

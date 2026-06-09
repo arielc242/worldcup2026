@@ -1,4 +1,9 @@
-const { kv } = require('@vercel/kv');
+const { Redis } = require('@upstash/redis');
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -15,17 +20,17 @@ module.exports = async (req, res) => {
         topScorer: topScorer||'', champion: champion||'',
         at: new Date().toISOString(), pts: 0, scorerAwarded: false
       };
-      let list = await kv.get('submissions') || [];
+      let list = await redis.get('submissions') || [];
       list = list.filter(s => s.name !== name);
       list.push(submission);
-      await kv.set('submissions', list);
+      await redis.set('submissions', list);
       return res.status(200).json({ ok: true });
     } catch(e) { return res.status(500).json({ error: e.message }); }
   }
 
   if (req.method === 'GET') {
     try {
-      const list = await kv.get('submissions') || [];
+      const list = await redis.get('submissions') || [];
       return res.status(200).json(list);
     } catch(e) { return res.status(500).json({ error: e.message }); }
   }
