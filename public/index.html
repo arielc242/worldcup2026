@@ -125,6 +125,10 @@
     <div class="special-box" style="margin-top:8px"><h3>⚽ מלך השערים</h3><p>מי יהיה מלך השערים? (12 נקודות)</p><input class="special-input" id="topScorer" type="text" placeholder="שם השחקן..."></div>
     <div class="special-box gold-box"><h3>🥇 אלופת המונדיאל</h3><p>מי תזכה בגביע? (18 נקודות)</p><select class="champ-sel" id="champion"><option value="">— בחר אלופה —</option></select></div>
     <button class="submit-btn" id="submitBtn" onclick="submitForm()">💾 שמור טופס</button>
+    <div style="text-align:center;margin-top:8px">
+      <button onclick="viewMySubmission(document.getElementById('playerName').value.trim())" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:10px 24px;font-family:'Heebo',sans-serif;font-size:14px;cursor:pointer;">👁️ צפה בטופס שלי</button>
+    </div>
+    <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted)">⏰ ניתן למלא עד <strong style="color:var(--gold)">11.6.2026 בשעה 19:00</strong></div>
   </div>
   <div id="section-leaderboard" class="section">
     <div class="lb-top">
@@ -492,20 +496,157 @@ function onWinnerPick(id){
   refreshKnockout();
 }
 
-async function submitForm(){
+// ==================== DEADLINE ====================
+const DEADLINE = new Date('2026-06-11T19:00:00+03:00'); // First game June 11 19:00 Israel time
+function isPastDeadline(){ return new Date() > DEADLINE; }
+
+function checkDeadline(){
+  if(isPastDeadline()){
+    const btn=document.getElementById('submitBtn');
+    btn.disabled=true;
+    btn.style.background='#666';
+    btn.textContent='⏰ הזמן למלא הסתיים — 11.6 בשעה 19:00';
+    const nameInput=document.getElementById('playerName');
+    nameInput.placeholder='הכנס שם לצפייה בטופס שלך...';
+  }
+}
+
+// ==================== DRAFT (local save) ====================
+function collectFormData(){
   const name=document.getElementById('playerName').value.trim();
-  if(!name){toast('נא להכניס שם!',true);return;}
-  const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='שומר...';
   const scores={};
-  MATCHES.forEach(m=>{const h=document.getElementById('h_'+m.id)?.value,a=document.getElementById('a_'+m.id)?.value;if(h!==''&&a!=='')scores[m.id]={h:parseInt(h),a:parseInt(a)};});
+  MATCHES.forEach(m=>{
+    const h=document.getElementById('h_'+m.id)?.value,a=document.getElementById('a_'+m.id)?.value;
+    if(h!==''&&a!=='')scores[m.id]={h:parseInt(h),a:parseInt(a)};
+  });
   const ko={};
   [...R32_STRUCTURE,...R16_STRUCTURE,...QF_STRUCTURE,...SF_STRUCTURE,THIRD_STRUCTURE,FINAL_STRUCTURE].forEach(m=>{
     const kh=document.getElementById('kh_'+m.id)?.value,ka=document.getElementById('ka_'+m.id)?.value,kw=document.getElementById('kw_'+m.id)?.value;
     ko[m.id]={h:kh?parseInt(kh):null,a:ka?parseInt(ka):null,winner:kw||null};
   });
+  return {name,scores,ko,topScorer:document.getElementById('topScorer').value.trim(),champion:document.getElementById('champion').value};
+}
+
+function saveDraft(){
+  const name=document.getElementById('playerName').value.trim();
+  if(!name)return;
+  const data=collectFormData();
+  localStorage.setItem('wc2026_draft_'+name, JSON.stringify(data));
+}
+
+function loadDraft(name){
   try{
-    const r=await fetch('/api/submissions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,scores,ko,topScorer:document.getElementById('topScorer').value.trim(),champion:document.getElementById('champion').value})});
+    const raw=localStorage.getItem('wc2026_draft_'+name);
+    if(!raw)return false;
+    const data=JSON.parse(raw);
+    // Fill scores
+    Object.keys(data.scores||{}).forEach(id=>{
+      const el_h=document.getElementById('h_'+id),el_a=document.getElementById('a_'+id);
+      if(el_h&&el_a){el_h.value=data.scores[id].h;el_a.value=data.scores[id].a;onScore(id);}
+    });
+    // Fill KO
+    Object.keys(data.ko||{}).forEach(id=>{
+      const kh=document.getElementById('kh_'+id),ka=document.getElementById('ka_'+id),kw=document.getElementById('kw_'+id);
+      if(kh&&data.ko[id].h!==null)kh.value=data.ko[id].h;
+      if(ka&&data.ko[id].a!==null)ka.value=data.ko[id].a;
+      if(kw&&data.ko[id].winner){
+        // Need to refresh knockout first so options are populated
+        setTimeout(()=>{
+          if(kw.querySelector(`option[value="${data.ko[id].winner}"]`)){
+            kw.value=data.ko[id].winner;
+            onWinnerPick(id);
+          }
+        },100);
+      }
+    });
+    // Fill top scorer and champion
+    if(data.topScorer)document.getElementById('topScorer').value=data.topScorer;
+    if(data.champion)document.getElementById('champion').value=data.champion;
+    return true;
+  }catch(e){return false;}
+}
+
+// Auto-save draft every 10 seconds
+setInterval(()=>{
+  const name=document.getElementById('playerName').value.trim();
+  if(name&&!isPastDeadline())saveDraft();
+},10000);
+
+// Load draft when name is entered
+document.addEventListener('DOMContentLoaded',()=>{
+  const nameInput=document.getElementById('playerName');
+  if(nameInput){
+    nameInput.addEventListener('blur',()=>{
+      const name=nameInput.value.trim();
+      if(!name)return;
+      const loaded=loadDraft(name);
+      if(loaded)toast('📋 טיוטה נטענה!');
+    });
+  }
+  checkDeadline();
+});
+
+// ==================== VIEW MY SUBMISSION ====================
+async function viewMySubmission(name){
+  try{
+    const r=await fetch('/api/submissions');
     if(!r.ok)throw new Error('שגיאה');
+    const list=await r.json();
+    const sub=list.find(s=>s.name===name);
+    if(!sub){toast('לא נמצא טופס עבור '+name,true);return;}
+    showSubmissionModal(sub);
+  }catch(e){toast('❌ '+e.message,true);}
+}
+
+function showSubmissionModal(sub){
+  const existing=document.getElementById('subModal');
+  if(existing)existing.remove();
+
+  const groupRows=MATCHES.map(m=>{
+    const s=sub.scores?.[m.id];
+    if(!s)return `<tr><td style="font-size:12px">${m.home} נגד ${m.away}</td><td style="color:var(--muted);font-size:12px">לא מולא</td></tr>`;
+    const dir=s.h>s.a?'ניצחון בית':s.h<s.a?'ניצחון אורח':'תיקו';
+    return `<tr><td style="font-size:12px">${m.home} נגד ${m.away}</td><td style="font-size:12px;color:var(--gold)">${s.h}:${s.a} <span style="color:var(--muted)">(${dir})</span></td></tr>`;
+  }).join('');
+
+  const modal=document.createElement('div');
+  modal.id='subModal';
+  modal.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:1000;overflow-y:auto;direction:rtl;';
+  modal.innerHTML=`
+    <div style="max-width:600px;margin:20px auto;background:var(--card);border-radius:16px;border:1px solid var(--border);padding:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h2 style="color:var(--gold)">📋 הטופס של ${sub.name}</h2>
+        <button onclick="document.getElementById('subModal').remove()" style="background:var(--dark3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 12px;cursor:pointer;font-family:'Heebo',sans-serif;">סגור ✕</button>
+      </div>
+      <div style="background:var(--dark3);border-radius:10px;padding:12px;margin-bottom:12px;">
+        <div style="font-size:13px;margin-bottom:4px;">⚽ <strong>מלך שערים:</strong> ${sub.topScorer||'לא מולא'}</div>
+        <div style="font-size:13px;">🏆 <strong>אלופה:</strong> ${sub.champion||'לא מולא'}</div>
+      </div>
+      <h3 style="font-size:14px;color:var(--muted);margin-bottom:8px;">שלב הבתים</h3>
+      <table style="width:100%;border-collapse:collapse;">
+        <tbody>${groupRows}</tbody>
+      </table>
+    </div>`;
+  document.body.appendChild(modal);
+}
+
+async function submitForm(){
+  const name=document.getElementById('playerName').value.trim();
+  if(!name){toast('נא להכניס שם!',true);return;}
+
+  // Check deadline
+  if(isPastDeadline()){
+    // After deadline — only allow viewing
+    viewMySubmission(name);
+    return;
+  }
+
+  const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='שומר...';
+  const data=collectFormData();
+  try{
+    const r=await fetch('/api/submissions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    if(!r.ok)throw new Error('שגיאה');
+    saveDraft(name); // also save locally
     toast('✅ הטופס נשמר בהצלחה!');
   }catch(e){toast('❌ '+e.message,true);}
   btn.disabled=false;btn.textContent='💾 שמור טופס';
@@ -550,6 +691,7 @@ function toast(msg,err=false){
 
 buildGroups();
 buildKnockout();
+checkDeadline();
 </script>
 </body>
 </html>
