@@ -580,18 +580,17 @@ setInterval(()=>{
 },5000);
 
 // Load draft when name is entered
-document.addEventListener('DOMContentLoaded',()=>{
+// Name blur — auto load draft
+function initNameListener(){
   const nameInput=document.getElementById('playerName');
-  if(nameInput){
-    nameInput.addEventListener('blur',()=>{
-      const name=nameInput.value.trim();
-      if(!name)return;
-      const loaded=loadDraft(name);
-      if(loaded)toast('📋 טיוטה נטענה!');
-    });
-  }
-  checkDeadline();
-});
+  if(!nameInput)return;
+  nameInput.addEventListener('blur',()=>{
+    const name=nameInput.value.trim();
+    if(!name)return;
+    const raw=localStorage.getItem('wc2026_draft_'+name);
+    if(raw){loadDraft(name);toast('📋 טיוטה נטענה!');}
+  });
+}
 
 // ==================== VIEW MY SUBMISSION ====================
 async function viewMySubmission(name){
@@ -699,6 +698,7 @@ function toast(msg,err=false){
 buildGroups();
 buildKnockout();
 checkDeadline();
+initNameListener();
 </script>
 </body>
 </html>
