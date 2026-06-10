@@ -118,16 +118,13 @@
 </div>
 <div class="container">
   <div id="section-form" class="section active">
-    <div class="name-box"><h2>👤 מי אתה?</h2><input class="name-input" id="playerName" type="text" placeholder="הכנס שם מלא..."></div>
+    <div class="name-box"><h2>👤 מי אתה?</h2><input class="name-input" id="playerName" type="text" placeholder="הכנס שם מלא..."><div style="margin-top:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;"><button onclick="loadDraftBtn()" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 18px;font-family:Heebo,sans-serif;font-size:13px;cursor:pointer;">📋 טען טיוטה</button><button onclick="viewMySubmission(document.getElementById('playerName').value.trim())" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 18px;font-family:Heebo,sans-serif;font-size:13px;cursor:pointer;">👁️ צפה בטופס שלי</button></div></div>
     <div id="groupStage"></div>
     <div class="ko-header"><h2>🏆 שלבי הנוקאאוט</h2><p>הברקט מתמלא אוטומטית לפי הניחושים שלך בשלב הבתים. בחר מנצח לכל משחק — והוא יעבור לשלב הבא אוטומטית.</p></div>
     <div id="knockoutSection"></div>
     <div class="special-box" style="margin-top:8px"><h3>⚽ מלך השערים</h3><p>מי יהיה מלך השערים? (12 נקודות)</p><input class="special-input" id="topScorer" type="text" placeholder="שם השחקן..."></div>
     <div class="special-box gold-box"><h3>🥇 אלופת המונדיאל</h3><p>מי תזכה בגביע? (18 נקודות)</p><select class="champ-sel" id="champion"><option value="">— בחר אלופה —</option></select></div>
     <button class="submit-btn" id="submitBtn" onclick="submitForm()">💾 שמור טופס</button>
-    <div style="text-align:center;margin-top:8px">
-      <button onclick="viewMySubmission(document.getElementById('playerName').value.trim())" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:10px 24px;font-family:'Heebo',sans-serif;font-size:14px;cursor:pointer;">👁️ צפה בטופס שלי</button>
-    </div>
     <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted)">⏰ ניתן למלא עד <strong style="color:var(--gold)">11.6.2026 בשעה 19:00</strong></div>
   </div>
   <div id="section-leaderboard" class="section">
@@ -279,6 +276,7 @@ function onScore(id){
   else{el.className='res-prev res-draw';el.textContent='תיקו ✓';}
   const grp=MATCHES.find(m=>m.id===id)?.g;
   computeGroup(grp);
+  saveDraft();
 }
 
 function computeGroup(grp){
@@ -566,11 +564,20 @@ function loadDraft(name){
   }catch(e){return false;}
 }
 
-// Auto-save draft every 10 seconds
+// loadDraftBtn — called by button click
+function loadDraftBtn(){
+  const name=document.getElementById('playerName').value.trim();
+  if(!name){toast('הכנס שם קודם!',true);return;}
+  const loaded=loadDraft(name);
+  if(loaded)toast('📋 טיוטה נטענה!');
+  else toast('אין טיוטה שמורה עבור '+name,true);
+}
+
+// Auto-save draft every 5 seconds
 setInterval(()=>{
   const name=document.getElementById('playerName').value.trim();
   if(name&&!isPastDeadline())saveDraft();
-},10000);
+},5000);
 
 // Load draft when name is entered
 document.addEventListener('DOMContentLoaded',()=>{
