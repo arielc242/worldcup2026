@@ -118,13 +118,16 @@
 </div>
 <div class="container">
   <div id="section-form" class="section active">
-    <div class="name-box"><h2>👤 מי אתה?</h2><input class="name-input" id="playerName" type="text" placeholder="הכנס שם מלא..."><div style="margin-top:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;"><button onclick="loadDraftBtn()" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 18px;font-family:Heebo,sans-serif;font-size:13px;cursor:pointer;">📋 טען טיוטה</button><button onclick="viewMySubmission(document.getElementById('playerName').value.trim())" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 18px;font-family:Heebo,sans-serif;font-size:13px;cursor:pointer;">👁️ צפה בטופס שלי</button></div></div>
+    <div class="name-box"><h2>👤 מי אתה?</h2><input class="name-input" id="playerName" type="text" placeholder="הכנס שם מלא..."></div>
     <div id="groupStage"></div>
     <div class="ko-header"><h2>🏆 שלבי הנוקאאוט</h2><p>הברקט מתמלא אוטומטית לפי הניחושים שלך בשלב הבתים. בחר מנצח לכל משחק — והוא יעבור לשלב הבא אוטומטית.</p></div>
     <div id="knockoutSection"></div>
     <div class="special-box" style="margin-top:8px"><h3>⚽ מלך השערים</h3><p>מי יהיה מלך השערים? (12 נקודות)</p><input class="special-input" id="topScorer" type="text" placeholder="שם השחקן..."></div>
     <div class="special-box gold-box"><h3>🥇 אלופת המונדיאל</h3><p>מי תזכה בגביע? (18 נקודות)</p><select class="champ-sel" id="champion"><option value="">— בחר אלופה —</option></select></div>
     <button class="submit-btn" id="submitBtn" onclick="submitForm()">💾 שמור טופס</button>
+    <div style="text-align:center;margin-top:8px">
+      <button onclick="viewMySubmission(document.getElementById('playerName').value.trim())" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:10px 24px;font-family:'Heebo',sans-serif;font-size:14px;cursor:pointer;">👁️ צפה בטופס שלי</button>
+    </div>
     <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted)">⏰ ניתן למלא עד <strong style="color:var(--gold)">11.6.2026 בשעה 19:00</strong></div>
   </div>
   <div id="section-leaderboard" class="section">
@@ -137,18 +140,10 @@
   </div>
   <div id="section-admin" class="section">
     <div class="admin-box">
-      <h3>🔐 פאנל ניהול</h3><p>רק למנהל</p>
+      <h3>🔐 פאנל ניהול</h3><p>רק למנהל — הוסף נקודות למלך השערים בסוף הטורניר</p>
       <div style="margin-bottom:16px"><label style="font-size:12px;color:var(--muted);display:block;margin-bottom:6px">סיסמת מנהל</label><input class="admin-input" id="adminKey" type="password" placeholder="סיסמה..." style="max-width:220px"></div>
-      
       <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:6px">⚽ שם מלך השערים האמיתי (12 נקודות)</label>
       <div class="admin-row"><input class="admin-input" id="adminScorer" type="text" placeholder="שם מלך השערים..."><button class="admin-btn" onclick="adminAward()">הוסף נקודות</button></div>
-      
-      <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08)">
-        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:8px">🗑️ מחיקת טופס</label>
-        <div id="adminSubmissionsList" style="margin-bottom:8px"></div>
-        <button onclick="loadAdminSubmissions()" style="background:var(--dark3);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:7px 14px;font-family:'Heebo',sans-serif;font-size:12px;cursor:pointer;">טען רשימת משתתפים</button>
-      </div>
-
       <div id="adminMsg" style="margin-top:12px;font-size:13px;color:var(--green);display:none"></div>
     </div>
   </div>
@@ -284,7 +279,6 @@ function onScore(id){
   else{el.className='res-prev res-draw';el.textContent='תיקו ✓';}
   const grp=MATCHES.find(m=>m.id===id)?.g;
   computeGroup(grp);
-  saveDraft();
 }
 
 function computeGroup(grp){
@@ -503,7 +497,7 @@ function onWinnerPick(id){
 }
 
 // ==================== DEADLINE ====================
-const DEADLINE = new Date('2026-06-11T12:00:00-07:00'); // June 11 12pm PST
+const DEADLINE = new Date('2026-06-11T19:00:00+03:00'); // First game June 11 19:00 Israel time
 function isPastDeadline(){ return new Date() > DEADLINE; }
 
 function checkDeadline(){
@@ -572,33 +566,25 @@ function loadDraft(name){
   }catch(e){return false;}
 }
 
-// loadDraftBtn — called by button click
-function loadDraftBtn(){
-  const name=document.getElementById('playerName').value.trim();
-  if(!name){toast('הכנס שם קודם!',true);return;}
-  const loaded=loadDraft(name);
-  if(loaded)toast('📋 טיוטה נטענה!');
-  else toast('אין טיוטה שמורה עבור '+name,true);
-}
-
-// Auto-save draft every 5 seconds
+// Auto-save draft every 10 seconds
 setInterval(()=>{
   const name=document.getElementById('playerName').value.trim();
   if(name&&!isPastDeadline())saveDraft();
-},5000);
+},10000);
 
 // Load draft when name is entered
-// Name blur — auto load draft
-function initNameListener(){
+document.addEventListener('DOMContentLoaded',()=>{
   const nameInput=document.getElementById('playerName');
-  if(!nameInput)return;
-  nameInput.addEventListener('blur',()=>{
-    const name=nameInput.value.trim();
-    if(!name)return;
-    const raw=localStorage.getItem('wc2026_draft_'+name);
-    if(raw){loadDraft(name);toast('📋 טיוטה נטענה!');}
-  });
-}
+  if(nameInput){
+    nameInput.addEventListener('blur',()=>{
+      const name=nameInput.value.trim();
+      if(!name)return;
+      const loaded=loadDraft(name);
+      if(loaded)toast('📋 טיוטה נטענה!');
+    });
+  }
+  checkDeadline();
+});
 
 // ==================== VIEW MY SUBMISSION ====================
 async function viewMySubmission(name){
@@ -692,35 +678,6 @@ async function adminAward(){
   }catch(e){toast('❌ '+e.message,true);}
 }
 
-async function loadAdminSubmissions(){
-  const key=document.getElementById('adminKey').value;
-  if(!key){toast('נא להכניס סיסמה',true);return;}
-  try{
-    const r=await fetch('/api/submissions');
-    if(!r.ok)throw new Error('שגיאה');
-    const list=await r.json();
-    const con=document.getElementById('adminSubmissionsList');
-    if(!list.length){con.innerHTML='<div style="font-size:12px;color:var(--muted)">אין משתתפים</div>';return;}
-    con.innerHTML=list.map(s=>`
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--dark3);border-radius:8px;margin-bottom:6px;">
-        <span style="font-size:13px;font-weight:600">${s.name}</span>
-        <button onclick="deleteSubmission('${s.name}')" style="background:var(--red);color:#fff;border:none;border-radius:7px;padding:4px 12px;font-family:'Heebo',sans-serif;font-size:12px;cursor:pointer;">מחק</button>
-      </div>`).join('');
-  }catch(e){toast('❌ '+e.message,true);}
-}
-
-async function deleteSubmission(name){
-  const key=document.getElementById('adminKey').value;
-  if(!key){toast('נא להכניס סיסמה',true);return;}
-  if(!confirm('למחוק את הטופס של '+name+'?'))return;
-  try{
-    const r=await fetch('/api/submissions',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({adminKey:key,name})});
-    if(!r.ok)throw new Error('שגיאה');
-    toast('✅ נמחק!');
-    loadAdminSubmissions();
-  }catch(e){toast('❌ '+e.message,true);}
-}
-
 function switchTab(tab,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
@@ -735,7 +692,6 @@ function toast(msg,err=false){
 buildGroups();
 buildKnockout();
 checkDeadline();
-initNameListener();
 </script>
 </body>
 </html>
