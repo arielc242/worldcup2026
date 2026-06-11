@@ -137,10 +137,18 @@
   </div>
   <div id="section-admin" class="section">
     <div class="admin-box">
-      <h3>🔐 פאנל ניהול</h3><p>רק למנהל — הוסף נקודות למלך השערים בסוף הטורניר</p>
+      <h3>🔐 פאנל ניהול</h3><p>רק למנהל</p>
       <div style="margin-bottom:16px"><label style="font-size:12px;color:var(--muted);display:block;margin-bottom:6px">סיסמת מנהל</label><input class="admin-input" id="adminKey" type="password" placeholder="סיסמה..." style="max-width:220px"></div>
+      
       <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:6px">⚽ שם מלך השערים האמיתי (12 נקודות)</label>
       <div class="admin-row"><input class="admin-input" id="adminScorer" type="text" placeholder="שם מלך השערים..."><button class="admin-btn" onclick="adminAward()">הוסף נקודות</button></div>
+      
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08)">
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:8px">🗑️ מחיקת טופס</label>
+        <div id="adminSubmissionsList" style="margin-bottom:8px"></div>
+        <button onclick="loadAdminSubmissions()" style="background:var(--dark3);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:7px 14px;font-family:'Heebo',sans-serif;font-size:12px;cursor:pointer;">טען רשימת משתתפים</button>
+      </div>
+
       <div id="adminMsg" style="margin-top:12px;font-size:13px;color:var(--green);display:none"></div>
     </div>
   </div>
@@ -681,6 +689,35 @@ async function adminAward(){
     const d=await r.json();if(!r.ok)throw new Error(d.error||'שגיאה');
     const msg=document.getElementById('adminMsg');msg.style.display='block';msg.textContent='✅ עודכן בהצלחה!';
     toast('✅ נקודות הוספו!');
+  }catch(e){toast('❌ '+e.message,true);}
+}
+
+async function loadAdminSubmissions(){
+  const key=document.getElementById('adminKey').value;
+  if(!key){toast('נא להכניס סיסמה',true);return;}
+  try{
+    const r=await fetch('/api/submissions');
+    if(!r.ok)throw new Error('שגיאה');
+    const list=await r.json();
+    const con=document.getElementById('adminSubmissionsList');
+    if(!list.length){con.innerHTML='<div style="font-size:12px;color:var(--muted)">אין משתתפים</div>';return;}
+    con.innerHTML=list.map(s=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--dark3);border-radius:8px;margin-bottom:6px;">
+        <span style="font-size:13px;font-weight:600">${s.name}</span>
+        <button onclick="deleteSubmission('${s.name}')" style="background:var(--red);color:#fff;border:none;border-radius:7px;padding:4px 12px;font-family:'Heebo',sans-serif;font-size:12px;cursor:pointer;">מחק</button>
+      </div>`).join('');
+  }catch(e){toast('❌ '+e.message,true);}
+}
+
+async function deleteSubmission(name){
+  const key=document.getElementById('adminKey').value;
+  if(!key){toast('נא להכניס סיסמה',true);return;}
+  if(!confirm('למחוק את הטופס של '+name+'?'))return;
+  try{
+    const r=await fetch('/api/submissions',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({adminKey:key,name})});
+    if(!r.ok)throw new Error('שגיאה');
+    toast('✅ נמחק!');
+    loadAdminSubmissions();
   }catch(e){toast('❌ '+e.message,true);}
 }
 
