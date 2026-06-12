@@ -112,12 +112,12 @@
   <div class="sp">⚽ מלך שערים <strong>12</strong> נק׳</div>
 </div>
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('form',this)">📋 טופס ניבוי</button>
-  <button class="tab" onclick="switchTab('leaderboard',this)">🏅 לוח ניקוד</button>
+  <button class="tab" onclick="switchTab('form',this)">📋 טופס ניבוי</button>
+  <button class="tab active" onclick="switchTab('leaderboard',this)">🏅 לוח ניקוד</button>
   <button class="tab" onclick="switchTab('admin',this)">🔐 ניהול</button>
 </div>
 <div class="container">
-  <div id="section-form" class="section active">
+  <div id="section-form" class="section">
     <div class="name-box"><h2>👤 מי אתה?</h2><input class="name-input" id="playerName" type="text" placeholder="הכנס שם מלא..."><div style="margin-top:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;"><button onclick="loadDraftBtn()" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 18px;font-family:Heebo,sans-serif;font-size:13px;cursor:pointer;">📋 טען טיוטה</button><button onclick="viewMySubmission(document.getElementById('playerName').value.trim())" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;padding:8px 18px;font-family:Heebo,sans-serif;font-size:13px;cursor:pointer;">👁️ צפה בטופס שלי</button></div></div>
     <div id="groupStage"></div>
     <div class="ko-header"><h2>🏆 שלבי הנוקאאוט</h2><p>הברקט מתמלא אוטומטית לפי הניחושים שלך בשלב הבתים. בחר מנצח לכל משחק — והוא יעבור לשלב הבא אוטומטית.</p></div>
@@ -127,7 +127,7 @@
     <button class="submit-btn" id="submitBtn" onclick="submitForm()">💾 שמור טופס</button>
     <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted)">⏰ ניתן למלא עד <strong style="color:var(--gold)">11.6.2026 בשעה 19:00</strong></div>
   </div>
-  <div id="section-leaderboard" class="section">
+  <div id="section-leaderboard" class="section active">
     <div class="lb-top">
       <div><h2>🏅 לוח ניקוד</h2><div class="lb-updated" id="lbUpdated"></div></div>
       <div style="display:flex;align-items:center;gap:8px"><span class="live-dot"></span><span class="lb-sub" id="lbCount">טוען...</span>
@@ -736,6 +736,7 @@ buildGroups();
 buildKnockout();
 checkDeadline();
 initNameListener();
+loadLeaderboard();
 </script>
 </body>
 </html>
