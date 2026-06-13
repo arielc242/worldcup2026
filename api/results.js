@@ -25,15 +25,80 @@ const TEAM_MAP = {
 const mapTeam = n => TEAM_MAP[n] || n;
 
 // Match number to ID — worldcup26.ir uses id field starting from 1
-const MATCH_ID_MAP = {
-  '1':'A1','2':'A2','3':'B1','4':'B2','5':'C1','6':'C2','7':'D1','8':'D2','9':'E1','10':'E2',
-  '11':'F1','12':'F2','13':'G1','14':'G2','15':'H1','16':'H2','17':'I1','18':'I2','19':'J1','20':'J2',
-  '21':'K1','22':'K2','23':'L1','24':'L2','25':'A3','26':'A4','27':'B3','28':'B4','29':'C3','30':'C4',
-  '31':'D3','32':'D4','33':'E3','34':'E4','35':'F3','36':'F4','37':'G3','38':'G4','39':'H3','40':'H4',
-  '41':'I3','42':'I4','43':'J3','44':'J4','45':'K3','46':'K4','47':'L3','48':'L4',
-  '49':'A5','50':'A6','51':'B5','52':'B6','53':'C5','54':'C6','55':'D5','56':'D6',
-  '57':'E5','58':'E6','59':'F5','60':'F6','61':'G5','62':'G6','63':'H5','64':'H6',
-  '65':'I5','66':'I6','67':'J5','68':'J6','69':'K5','70':'K6','71':'L5','72':'L6'
+// Map by home+away team names since API IDs don't follow our expected order
+const TEAM_PAIR_TO_MATCH_ID = {
+  'Mexico-South Africa': 'A1',
+  'South Korea-Czechia': 'A2', 'South Korea-Czech Republic': 'A2',
+  'Mexico-South Korea': 'A3',
+  'Czechia-South Africa': 'A4', 'Czech Republic-South Africa': 'A4',
+  'Czechia-Mexico': 'A5', 'Czech Republic-Mexico': 'A5',
+  'South Africa-South Korea': 'A6',
+  'Canada-Bosnia and Herzegovina': 'B1', 'Canada-Bosnia': 'B1',
+  'Qatar-Switzerland': 'B2',
+  'Canada-Qatar': 'B3',
+  'Switzerland-Bosnia and Herzegovina': 'B4', 'Switzerland-Bosnia': 'B4',
+  'Switzerland-Canada': 'B5',
+  'Bosnia and Herzegovina-Qatar': 'B6', 'Bosnia-Qatar': 'B6',
+  'Brazil-Morocco': 'C1',
+  'Haiti-Scotland': 'C2',
+  'Brazil-Scotland': 'C3',
+  'Morocco-Haiti': 'C4',
+  'Morocco-Scotland': 'C5',
+  'Haiti-Brazil': 'C6',
+  'United States-Paraguay': 'D1', 'USA-Paraguay': 'D1',
+  'Australia-Turkey': 'D2', 'Australia-Türkiye': 'D2',
+  'United States-Australia': 'D3', 'USA-Australia': 'D3',
+  'Paraguay-Turkey': 'D4', 'Paraguay-Türkiye': 'D4',
+  'Turkey-United States': 'D5', 'Türkiye-United States': 'D5', 'Turkey-USA': 'D5', 'Türkiye-USA': 'D5',
+  'Australia-Paraguay': 'D6',
+  'Germany-Curaçao': 'E1', 'Germany-Curacao': 'E1',
+  'Ivory Coast-Ecuador': 'E2', "Cote d'Ivoire-Ecuador": 'E2',
+  'Germany-Ivory Coast': 'E3', "Germany-Cote d'Ivoire": 'E3',
+  'Ecuador-Curaçao': 'E4', 'Ecuador-Curacao': 'E4',
+  'Ecuador-Germany': 'E5',
+  'Curaçao-Ivory Coast': 'E6', "Curacao-Cote d'Ivoire": 'E6',
+  'Netherlands-Japan': 'F1',
+  'Sweden-Tunisia': 'F2',
+  'Netherlands-Sweden': 'F3',
+  'Japan-Tunisia': 'F4',
+  'Japan-Sweden': 'F5',
+  'Tunisia-Netherlands': 'F6',
+  'Belgium-Egypt': 'G1',
+  'Iran-New Zealand': 'G2',
+  'Belgium-Iran': 'G3',
+  'Egypt-New Zealand': 'G4',
+  'Egypt-Iran': 'G5',
+  'New Zealand-Belgium': 'G6',
+  'Spain-Cape Verde': 'H1', 'Spain-Cabo Verde': 'H1',
+  'Saudi Arabia-Uruguay': 'H2',
+  'Spain-Saudi Arabia': 'H3',
+  'Uruguay-Cape Verde': 'H4', 'Uruguay-Cabo Verde': 'H4',
+  'Uruguay-Spain': 'H5',
+  'Cape Verde-Saudi Arabia': 'H6', 'Cabo Verde-Saudi Arabia': 'H6',
+  'France-Senegal': 'I1',
+  'Iraq-Norway': 'I2',
+  'France-Iraq': 'I3',
+  'Norway-Senegal': 'I4',
+  'Norway-France': 'I5',
+  'Senegal-Iraq': 'I6',
+  'Argentina-Algeria': 'J1',
+  'Austria-Jordan': 'J2',
+  'Argentina-Austria': 'J3',
+  'Jordan-Algeria': 'J4',
+  'Jordan-Argentina': 'J5',
+  'Algeria-Austria': 'J6',
+  'Portugal-DR Congo': 'K1', 'Portugal-Congo DR': 'K1',
+  'Uzbekistan-Colombia': 'K2',
+  'Portugal-Uzbekistan': 'K3',
+  'Colombia-DR Congo': 'K4', 'Colombia-Congo DR': 'K4',
+  'Colombia-Portugal': 'K5',
+  'DR Congo-Uzbekistan': 'K6', 'Congo DR-Uzbekistan': 'K6',
+  'England-Croatia': 'L1',
+  'Ghana-Panama': 'L2',
+  'England-Ghana': 'L3',
+  'Panama-Croatia': 'L4',
+  'Panama-England': 'L5',
+  'Croatia-Ghana': 'L6',
 };
 
 async function fetchResults() {
@@ -65,11 +130,16 @@ function parseResults(games) {
     const a = parseInt(match.away_score);
     if (isNaN(h) || isNaN(a)) return;
 
-    const matchId = MATCH_ID_MAP[String(match.id)];
     const type = (match.type || '').toLowerCase();
-    const homeTeam = mapTeam(match.home_team_name_en || match.home_team);
-    const awayTeam = mapTeam(match.away_team_name_en || match.away_team);
+    const homeTeamEn = match.home_team_name_en || match.home_team || '';
+    const awayTeamEn = match.away_team_name_en || match.away_team || '';
+    const homeTeam = mapTeam(homeTeamEn);
+    const awayTeam = mapTeam(awayTeamEn);
     const winner = h > a ? homeTeam : awayTeam;
+    
+    // Look up match ID by team names
+    const pairKey = homeTeamEn + '-' + awayTeamEn;
+    const matchId = TEAM_PAIR_TO_MATCH_ID[pairKey];
 
     // Group stage
     if (type === 'group' && matchId) {
