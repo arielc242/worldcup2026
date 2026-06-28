@@ -612,6 +612,71 @@ async function viewMySubmission(name){
   }catch(e){toast('❌ '+e.message,true);}
 }
 
+// ==================== PLAYER BRACKET (read-only reconstruction) ====================
+// Rebuilds a player's full predicted bracket from their stored scores + ko picks,
+// using the same standings/seeding logic as the live form (no global state touched).
+function _standingsFromScores(scores){
+  const st={};
+  GROUPS.forEach(g=>{
+    const teams=g.teams,pts={},gd={},gf={};
+    teams.forEach(t=>{pts[t]=0;gd[t]=0;gf[t]=0;});
+    MATCHES.filter(m=>m.g===g.l).forEach(m=>{
+      const s=scores&&scores[m.id]; if(!s||s.h==null||s.a==null)return;
+      const h=s.h,a=s.a;
+      if(h>a)pts[m.home]+=3; else if(h<a)pts[m.away]+=3; else {pts[m.home]++;pts[m.away]++;}
+      gd[m.home]+=(h-a);gd[m.away]+=(a-h);gf[m.home]+=h;gf[m.away]+=a;
+    });
+    const sorted=[...teams].sort((x,y)=>(pts[y]-pts[x])||(gd[y]-gd[x])||(gf[y]-gf[x]));
+    st[g.l]={};
+    sorted.forEach((t,i)=>{st[g.l][i+1]=t;st[g.l][t]={pts:pts[t],gd:gd[t],gf:gf[t]};});
+  });
+  return st;
+}
+function _r32Thirds(st){
+  const bt=gs=>{const th=[];gs.forEach(g=>{const s=st[g];if(s&&s[3]){const t=s[3];th.push({team:t,pts:s[t].pts,gd:s[t].gd,gf:s[t].gf});}});th.sort((a,b)=>(b.pts-a.pts)||(b.gd-a.gd)||(b.gf-a.gf));return th;};
+  const all=bt(["A","B","C","D","E","F","G","H","I","J","K","L"]);
+  const tg=t=>{for(const g of GROUPS)if(g.teams.includes(t))return g.l;return null;};
+  const used=new Set(),as={};
+  R32_STRUCTURE.filter(m=>m.h.pos===3||m.a.pos===3).forEach(m=>['h','a'].forEach(side=>{
+    const slot=m[side];if(slot.pos!==3)return;
+    const best=all.find(t=>slot.gs.includes(tg(t.team))&&!used.has(t.team));
+    if(best){used.add(best.team);as[m.id+'_'+side]=best.team;}
+  }));
+  return as;
+}
+function _r32Team(m,side,st,as){const slot=m[side];if(slot.pos===1||slot.pos===2)return st[slot.g]?st[slot.g][slot.pos]:null;if(slot.pos===3)return as[m.id+'_'+side]||null;return null;}
+function buildPlayerBracket(sub){
+  const st=_standingsFromScores(sub.scores||{});
+  const as=_r32Thirds(st);
+  const W=id=>(sub.ko&&sub.ko[id]&&sub.ko[id].winner)||null;
+  const teams={};
+  R32_STRUCTURE.forEach(m=>teams[m.id]={h:_r32Team(m,'h',st,as),a:_r32Team(m,'a',st,as)});
+  [...R16_STRUCTURE,...QF_STRUCTURE,...SF_STRUCTURE].forEach(m=>teams[m.id]={h:W(m.h),a:W(m.a)});
+  const loser=m=>{const w=W(m.id),h=teams[m.id].h,a=teams[m.id].a;return (w&&h&&a)?(w===h?a:h):null;};
+  teams[THIRD_STRUCTURE.id]={h:loser(SF_STRUCTURE[0]),a:loser(SF_STRUCTURE[1])};
+  teams[FINAL_STRUCTURE.id]={h:W(SF_STRUCTURE[0].id),a:W(SF_STRUCTURE[1].id)};
+  return {teams,W};
+}
+function bracketHTML(sub){
+  const {teams,W}=buildPlayerBracket(sub);
+  const rounds=[['שלב 32',R32_STRUCTURE],['שמינית גמר',R16_STRUCTURE],['רבע גמר',QF_STRUCTURE],['חצי גמר',SF_STRUCTURE],['משחק מקום שלישי',[THIRD_STRUCTURE]],['גמר',[FINAL_STRUCTURE]]];
+  const cell=(team,win)=>{
+    if(!team)return '<span style="color:var(--muted)">—</span>';
+    const isW=win&&team===win;
+    return `<span style="${isW?'color:var(--gold);font-weight:700':''}">${team}${isW?' ✓':''}</span>`;
+  };
+  return rounds.map(([title,ms])=>{
+    const rows=ms.map(m=>{
+      const t=teams[m.id]||{},w=W(m.id);
+      return `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 10px;background:var(--dark3);border-radius:8px;margin-bottom:4px;font-size:12px;">
+        <span style="flex:1;text-align:right">${cell(t.h,w)}</span>
+        <span style="color:var(--muted);font-size:11px">נגד</span>
+        <span style="flex:1;text-align:left">${cell(t.a,w)}</span></div>`;
+    }).join('');
+    return `<h3 style="font-size:13px;color:var(--gold);margin:14px 0 6px;">${title}</h3>${rows}`;
+  }).join('');
+}
+
 function showSubmissionModal(sub){
   const existing=document.getElementById('subModal');
   if(existing)existing.remove();
@@ -640,6 +705,8 @@ function showSubmissionModal(sub){
       <table style="width:100%;border-collapse:collapse;">
         <tbody>${groupRows}</tbody>
       </table>
+      <h3 style="font-size:14px;color:var(--muted);margin:18px 0 4px;">🏆 הברקט המלא (נוקאאוט)</h3>
+      ${bracketHTML(sub)}
     </div>`;
   document.body.appendChild(modal);
 }
