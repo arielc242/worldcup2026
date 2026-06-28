@@ -660,18 +660,19 @@ function buildPlayerBracket(sub){
 function bracketHTML(sub){
   const {teams,W}=buildPlayerBracket(sub);
   const rounds=[['שלב 32',R32_STRUCTURE],['שמינית גמר',R16_STRUCTURE],['רבע גמר',QF_STRUCTURE],['חצי גמר',SF_STRUCTURE],['משחק מקום שלישי',[THIRD_STRUCTURE]],['גמר',[FINAL_STRUCTURE]]];
-  const cell=(team,win)=>{
+  const cell=(team,win,sc)=>{
     if(!team)return '<span style="color:var(--muted)">—</span>';
     const isW=win&&team===win;
-    return `<span style="${isW?'color:var(--gold);font-weight:700':''}">${team}${isW?' ✓':''}</span>`;
+    const score=(sc!=null&&sc!=='')?` <span style="color:var(--muted);font-weight:400">(${sc})</span>`:'';
+    return `<span style="${isW?'color:var(--gold);font-weight:700':''}">${team}${isW?' ✓':''}</span>${score}`;
   };
   return rounds.map(([title,ms])=>{
     const rows=ms.map(m=>{
-      const t=teams[m.id]||{},w=W(m.id);
+      const t=teams[m.id]||{},w=W(m.id),ko=(sub.ko&&sub.ko[m.id])||{};
       return `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 10px;background:var(--dark3);border-radius:8px;margin-bottom:4px;font-size:12px;">
-        <span style="flex:1;text-align:right">${cell(t.h,w)}</span>
+        <span style="flex:1;text-align:right">${cell(t.h,w,ko.h)}</span>
         <span style="color:var(--muted);font-size:11px">נגד</span>
-        <span style="flex:1;text-align:left">${cell(t.a,w)}</span></div>`;
+        <span style="flex:1;text-align:left">${cell(t.a,w,ko.a)}</span></div>`;
     }).join('');
     return `<h3 style="font-size:13px;color:var(--gold);margin:14px 0 6px;">${title}</h3>${rows}`;
   }).join('');
